@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anima — Trova la tua anima gemella</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- AUTH -->
+  <div id="screen-auth">
+    <div class="seal"></div>
+    <h1 class="brand display">Anima</h1>
+    <p class="tagline">trova la tua anima gemella</p>
+    <div class="auth-box">
+      <div class="auth-toggle">
+        <button id="toggle-login" class="active" onclick="setAuthMode('login')">Accedi</button>
+        <button id="toggle-signup" onclick="setAuthMode('signup')">Registrati</button>
+      </div>
+      <input id="auth-email" type="email" placeholder="Email" autocomplete="email" />
+      <input id="auth-password" type="password" placeholder="Password (min. 6 caratteri)" autocomplete="current-password" />
+      <div class="error hidden" id="auth-error"></div>
+      <div class="info-msg hidden" id="auth-info"></div>
+      <button class="btn-primary btn-gold" id="auth-submit" onclick="handleAuthSubmit()">Accedi</button>
+      <p class="disclaimer">Creando un account accetti che il tuo profilo sia visibile agli altri utenti di Anima.</p>
+    </div>
+  </div>
+
+  <!-- SETUP -->
+  <div id="screen-setup" class="hidden">
+    <h2 class="section-title">Crea il tuo profilo</h2>
+    <p style="color:var(--muted);font-size:0.88rem;margin-top:-8px;">Qualche dettaglio per farti conoscere.</p>
+    <span class="label">Icona</span>
+    <div class="emoji-row" id="emoji-row"></div>
+    <span class="label">Nome</span>
+    <input id="setup-name" placeholder="Il tuo nome" />
+    <span class="label">Età</span>
+    <input id="setup-age" placeholder="La tua età" inputmode="numeric" />
+    <span class="label">Bio</span>
+    <textarea id="setup-bio" rows="3" maxlength="160" placeholder="Racconta qualcosa di te"></textarea>
+    <div class="charcount"><span id="bio-count">0</span>/160</div>
+    <span class="label">Interessi (fino a 5)</span>
+    <div class="tag-row" id="tag-row"></div>
+    <button class="btn-primary" style="margin-top:26px;" onclick="finishSetup()">Inizia a incontrare</button>
+  </div>
+
+  <!-- APP -->
+  <div id="screen-app" class="hidden">
+    <header>
+      <div class="brand-mini"><span class="display">Anima</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="status-pill" class="free-pill">Gratuito</span>
+      </div>
+    </header>
+
+    <main>
+      <div id="tab-browse" class="tab-content"></div>
+      <div id="tab-likes" class="tab-content hidden"></div>
+      <div id="tab-matches" class="tab-content hidden"></div>
+      <div id="tab-chat" class="hidden"></div>
+      <div id="tab-premium" class="tab-content hidden"></div>
+      <div id="tab-profile" class="tab-content hidden"></div>
+    </main>
+
+    <nav>
+      <button data-tab="browse" onclick="switchTab('browse')"><span class="ic">🔥</span>Scopri</button>
+      <button data-tab="likes" onclick="switchTab('likes')"><span class="ic">💛</span>Ti piaci a</button>
+      <button data-tab="matches" onclick="switchTab('matches')"><span class="ic">💬</span>Incontri</button>
+      <button data-tab="premium" onclick="switchTab('premium')"><span class="ic">👑</span>Premium</button>
+      <button data-tab="profile" onclick="switchTab('profile')"><span class="ic">👤</span>Profilo</button>
+    </nav>
+  </div>
+
+  <div id="match-popup" class="hidden">
+    <div class="seal"></div>
+    <h2>È un incontro speciale!</h2>
+    <p id="match-popup-text"></p>
+    <div class="popup-actions">
+      <button onclick="closeMatchPopup()">Continua a esplorare</button>
+      <button class="solid" onclick="goToMatchChat()">Scrivi ora</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
