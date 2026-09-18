@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anima — Pannello Admin</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .admin-nav{display:flex;gap:8px;padding:14px 20px 0;flex-wrap:wrap;}
+  .admin-nav button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:0.82rem;font-weight:600;cursor:pointer;}
+  .admin-nav button.active{background:var(--wine);color:#fff;border-color:var(--wine);}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+  .stat-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;}
+  .stat-box .num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--wine-dark);}
+  .stat-box .lbl{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;}
+  .admin-row{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;}
+  .admin-row-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .admin-row .row-name{flex:1;}
+  .pill-small{font-size:0.65rem;padding:2px 8px;border-radius:999px;font-weight:700;}
+  .pill-suspended{background:#F1DCD9;color:var(--wine);}
+  .admin-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .admin-actions button{font-size:0.72rem;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:var(--ivory);color:var(--ink);cursor:pointer;}
+  .admin-actions button.danger{color:#B03A30;border-color:#E3B8B2;}
+  .denied{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand-mini"><span class="display">Anima</span></div>
+    <a href="index.html" style="font-size:0.8rem;color:var(--muted);text-decoration:none;">← Sito</a>
+  </header>
+
+  <div id="denied" class="denied hidden">
+    <p class="display" style="font-size:1.4rem;color:var(--ink);">Accesso negato</p>
+    <p style="font-size:0.9rem;">Devi essere connesso con un account amministratore per vedere questa pagina.</p>
+  </div>
+
+  <div id="admin-content" class="hidden">
+    <div class="admin-nav">
+      <button data-tab="stats" class="active" onclick="switchAdminTab('stats')">Statistiche</button>
+      <button data-tab="users" onclick="switchAdminTab('users')">Utenti</button>
+      <button data-tab="reports" onclick="switchAdminTab('reports')">Segnalazioni</button>
+    </div>
+    <div class="tab-content" id="admin-stats"></div>
+    <div class="tab-content hidden" id="admin-users"></div>
+    <div class="tab-content hidden" id="admin-reports"></div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
