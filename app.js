@@ -1,6 +1,7 @@
 const TAGS = ["Caffè","Escursioni","Cinema","Libri","Cucina","Viaggi","Musica","Videogiochi","Arte","Corsa","Yoga","Cani"];
 const EMOJIS = ["✨","🌙","🌊","🔥","🌻","🍀","🎧","📚","🌵","🦋"];
 const FREE_DAILY_LIKES = 8;
+const FREE_MESSAGE_LIMIT = 10;
 
 let session = null;
 let me = null;
@@ -24,6 +25,13 @@ function escapeHtml(s){
 }
 function todayStartISO(){
   const d = new Date(); d.setHours(0,0,0,0); return d.toISOString();
+}
+function containsContactInfo(text){
+  const phonePattern = /(\+?\d[\s\-\.]?){7,}/;
+  const linkPattern = /(https?:\/\/|www\.)/i;
+  const domainPattern = /\b[a-z0-9-]+\.(com|it|net|org|me|io|co|app|biz|info|tk)\b/i;
+  const appPattern = /\b(whatsapp|telegram|instagram|snapchat|wechat|wa\.me|t\.me|ig:|@gmail|@outlook|@hotmail)\b/i;
+  return phonePattern.test(text) || linkPattern.test(text) || domainPattern.test(text) || appPattern.test(text);
 }
 function avatarHtml(p, sizeClass, extraStyle){
   const style = extraStyle || '';
@@ -425,6 +433,21 @@ async function sendMessage(){
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if(!text || !activeChat) return;
+
+  if(containsContactInfo(text)){
+    toast('Per la sicurezza di tutti, niente numeri o link nei messaggi. Restiamo qui su Anima 💬');
+    return;
+  }
+
+  if(!isPremium){
+    const { count } = await supabaseClient.from('messages').select('*', { count: 'exact', head: true }).eq('sender_id', me.id);
+    if((count||0) >= FREE_MESSAGE_LIMIT){
+      toast('Hai raggiunto il limite di messaggi gratuiti. Passa a Premium per continuare a scrivere.');
+      switchTab('premium');
+      return;
+    }
+  }
+
   input.value='';
   const { error } = await supabaseClient.from('messages').insert({ sender_id: me.id, receiver_id: activeChat.id, content: text });
   if(error){ toast('Messaggio non inviato.'); return; }
@@ -438,7 +461,7 @@ function renderPremium(){
     el.innerHTML = `
       <div class="premium-card">
         <h3>Sei Premium 👑</h3>
-        <p style="font-size:0.85rem;">Hai accesso completo: vedi chi ti ha messo like, like illimitati e il badge di verifica sul tuo profilo.</p>
+        <p style="font-size:0.85rem;">Hai accesso completo: messaggi, chi ti ha messo like, like illimitati e il badge di verifica sul tuo profilo.</p>
       </div>
       <button class="btn-outline" onclick="togglePremium(false)">Disattiva Premium (demo)</button>
     `;
@@ -446,8 +469,9 @@ function renderPremium(){
     el.innerHTML = `
       <div class="premium-card">
         <h3>Passa a Premium</h3>
-        <div class="price">€9,99<span style="font-size:0.9rem;color:#EDE1D8;">/mese</span></div>
+        <div class="price">€5,99<span style="font-size:0.9rem;color:#EDE1D8;">/mese</span></div>
         <ul>
+          <li>Messaggi illimitati (il piano gratuito include i primi ${FREE_MESSAGE_LIMIT} messaggi)</li>
           <li>Vedi chi ti ha già messo like</li>
           <li>Like illimitati ogni giorno</li>
           <li>Badge di profilo verificato</li>
