@@ -96,7 +96,12 @@
     </div>
   </div>
 
-  <div id="toast"></div>
+    <div id="toast"></div>
+
+  <div id="photo-viewer" class="hidden" onclick="closePhotoViewer()">
+    <button id="photo-viewer-close" onclick="closePhotoViewer()">✕</button>
+    <img id="photo-viewer-img" src="" alt="Foto profilo" />
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
