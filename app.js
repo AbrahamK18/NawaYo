@@ -79,6 +79,7 @@ function setAuthMode(mode){
   document.getElementById('auth-submit').textContent = mode==='login' ? 'Accedi' : 'Crea account';
   document.getElementById('auth-error').classList.add('hidden');
   document.getElementById('auth-info').classList.add('hidden');
+  document.getElementById('forgot-password-link').classList.toggle('hidden', mode!=='login');
 }
 
 async function handleAuthSubmit(){
