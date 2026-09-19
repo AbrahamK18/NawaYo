@@ -40,8 +40,9 @@ module.exports = async (req, res) => {
       }),
     });
 
-    const data = await response.json();
+        const data = await response.json();
     if (!response.ok) {
+      console.error('NOWPayments error:', JSON.stringify(data));
       res.status(500).json({ error: data.message || 'Impossibile creare il pagamento' });
       return;
     }
