@@ -36,9 +36,18 @@ function containsContactInfo(text){
 function avatarHtml(p, sizeClass, extraStyle){
   const style = extraStyle || '';
   if(p && p.avatar_url){
-    return `<div class="${sizeClass}" style="background-image:url('${p.avatar_url}');background-size:cover;background-position:center;${style}"></div>`;
+    return `<div class="${sizeClass}" onclick="openPhotoViewer(event,'${p.avatar_url}')" style="cursor:pointer;background-image:url('${p.avatar_url}');background-size:cover;background-position:center;${style}"></div>`;
   }
   return `<div class="${sizeClass}" style="${style}">${(p && p.emoji) || '✨'}</div>`;
+}
+function openPhotoViewer(e, url){
+  if(e) e.stopPropagation();
+  document.getElementById('photo-viewer-img').src = url;
+  document.getElementById('photo-viewer').classList.remove('hidden');
+}
+function closePhotoViewer(){
+  document.getElementById('photo-viewer').classList.add('hidden');
+  document.getElementById('photo-viewer-img').src = '';
 }
 
 // ---------- BOOT ----------
