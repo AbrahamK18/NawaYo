@@ -62,6 +62,14 @@ function buildSetupPickers(){
   });
   window._setupEmoji = "✨"; window._setupTags = [];
 }
+async function handleForgotPassword(){
+  const email = document.getElementById('auth-email').value.trim();
+  if(!email){ toast('Inserisci prima la tua email qui sopra.'); return; }
+  const redirectTo = window.location.origin + '/reset-password.html';
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+  if(error){ toast('Errore: ' + error.message); return; }
+  toast('Controlla la tua email per il link di reset.');
+}
 
 // ---------- AUTH ----------
 function setAuthMode(mode){
