@@ -1,0 +1,28 @@
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  const infoEl = document.getElementById('reset-info');
+  if(!session){
+    infoEl.textContent = 'Link non valido o scaduto. Richiedi un nuovo link dalla pagina di accesso.';
+    infoEl.classList.remove('hidden');
+    document.getElementById('reset-submit').disabled = true;
+  }
+});
+
+async function handleResetPassword(){
+  const pw = document.getElementById('new-password').value;
+  const errEl = document.getElementById('reset-error');
+  errEl.classList.add('hidden');
+  if(!pw || pw.length < 6){ errEl.textContent = 'La password deve avere almeno 6 caratteri.'; errEl.classList.remove('hidden'); return; }
+
+  const { error } = await supabaseClient.auth.updateUser({ password: pw });
+  if(error){ errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+
+  toast('Password aggiornata! Reindirizzamento...');
+  setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+}
