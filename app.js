@@ -2,10 +2,11 @@ const TAGS = ["Caffè","Escursioni","Cinema","Libri","Cucina","Viaggi","Musica",
 const EMOJIS = ["✨","🌙","🌊","🔥","🌻","🍀","🎧","📚","🌵","🦋"];
 const FREE_DAILY_LIKES = 8;
 
-let session = null;      // supabase auth session
-let me = null;           // { id, email }
-let profile = null;      // row from profiles table
+let session = null;
+let me = null;
+let profile = null;
 let isPremium = false;
+let isAdmin = false;
 let candidates = [], cardIndex = 0;
 let matches = [];
 let activeChat = null;
@@ -23,6 +24,13 @@ function escapeHtml(s){
 }
 function todayStartISO(){
   const d = new Date(); d.setHours(0,0,0,0); return d.toISOString();
+}
+function avatarHtml(p, sizeClass, extraStyle){
+  const style = extraStyle || '';
+  if(p && p.avatar_url){
+    return `<div class="${sizeClass}" style="background-image:url('${p.avatar_url}');background-size:cover;background-position:center;${style}"></div>`;
+  }
+  return `<div class="${sizeClass}" style="${style}">${(p && p.emoji) || '✨'}</div>`;
 }
 
 // ---------- BOOT ----------
@@ -60,15 +68,25 @@ function buildSetupPickers(){
   document.getElementById('setup-bio').addEventListener('input', e=>{
     document.getElementById('bio-count').textContent = e.target.value.length;
   });
-  window._setupEmoji = "✨"; window._setupTags = [];
+  window._setupEmoji = "✨"; window._setupTags = []; window._setupAvatarUrl = null;
 }
-async function handleForgotPassword(){
-  const email = document.getElementById('auth-email').value.trim();
-  if(!email){ toast('Inserisci prima la tua email qui sopra.'); return; }
-  const redirectTo = window.location.origin + '/reset-password.html';
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
-  if(error){ toast('Errore: ' + error.message); return; }
-  toast('Controlla la tua email per il link di reset.');
+
+async function handleAvatarSelect(e){
+  const file = e.target.files[0];
+  if(!file || !me) return;
+  const statusEl = document.getElementById('avatar-status');
+  statusEl.textContent = 'Caricamento...';
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const path = `${me.id}/avatar.${ext}`;
+  const { error } = await supabaseClient.storage.from('avatars').upload(path, file, { upsert: true, cacheControl: '3600' });
+  if(error){ statusEl.textContent = 'Errore: ' + error.message; return; }
+  const { data } = supabaseClient.storage.from('avatars').getPublicUrl(path);
+  const url = data.publicUrl + '?t=' + Date.now();
+  window._setupAvatarUrl = url;
+  const preview = document.getElementById('avatar-preview');
+  preview.style.backgroundImage = `url('${url}')`;
+  preview.textContent = '';
+  statusEl.textContent = 'Foto caricata ✓';
 }
 
 // ---------- AUTH ----------
@@ -118,8 +136,25 @@ async function handleAuthSubmit(){
 
 async function afterAuth(){
   me = session.user;
+
+  const { data: adminRow } = await supabaseClient.from('admin_users').select('id').eq('id', me.id).maybeSingle();
+  isAdmin = !!adminRow;
+
   const { data: existingProfile } = await supabaseClient
     .from('profiles').select('*').eq('id', me.id).maybeSingle();
+
+  if(existingProfile && existingProfile.suspended){
+    const errEl = document.getElementById('auth-error');
+    await supabaseClient.auth.signOut();
+    me=null; profile=null; session=null;
+    document.getElementById('screen-app').classList.add('hidden');
+    document.getElementById('screen-setup').classList.add('hidden');
+    document.getElementById('screen-auth').classList.remove('hidden');
+    errEl.textContent = 'Il tuo account è stato sospeso. Contatta il supporto se pensi sia un errore.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
   if(existingProfile && existingProfile.name){
     profile = existingProfile;
     isPremium = !!profile.is_premium;
@@ -137,7 +172,7 @@ async function finishSetup(){
   const bio = document.getElementById('setup-bio').value.trim();
   if(!name || !age){ toast('Aggiungi nome ed età.'); return; }
 
-  const payload = { id: me.id, name, age, bio, tags: window._setupTags||[], emoji: window._setupEmoji||'✨' };
+  const payload = { id: me.id, name, age, bio, tags: window._setupTags||[], emoji: window._setupEmoji||'✨', avatar_url: window._setupAvatarUrl || (profile && profile.avatar_url) || null };
   const { error } = await supabaseClient.from('profiles').upsert(payload);
   if(error){ toast('Salvataggio non riuscito: ' + error.message); return; }
   profile = { ...profile, ...payload };
@@ -202,7 +237,7 @@ function renderBrowse(){
   el.innerHTML = `
     <div class="card-wrap">
       <div class="swipe-card">
-        <div class="avatar-big">${c.emoji||'✨'}</div>
+        ${avatarHtml(c, 'avatar-big')}
         <div class="name-row"><h3>${escapeHtml(c.name)}, ${escapeHtml(c.age)}</h3>${c.verified?'<span class="verified">✔</span>':''}</div>
         <p class="bio-text">${escapeHtml(c.bio||'Nessuna bio.')}</p>
         <div class="tags-mini">${(c.tags||[]).map(t=>`<span class="tag-chip">${escapeHtml(t)}</span>`).join('')}</div>
@@ -212,7 +247,18 @@ function renderBrowse(){
       <button class="round-btn btn-pass" onclick="decide(false)">✕</button>
       <button class="round-btn btn-like" onclick="decide(true)">♥</button>
     </div>
+    <div style="text-align:center;margin-top:10px;">
+      <button onclick="reportUser('${c.id}')" style="background:none;border:none;color:var(--muted);font-size:0.75rem;cursor:pointer;">⚑ Segnala profilo</button>
+    </div>
   `;
+}
+
+async function reportUser(targetId){
+  const reason = window.prompt('Perché vuoi segnalare questo profilo? (facoltativo)');
+  if(reason === null) return;
+  const { error } = await supabaseClient.from('reports').insert({ reporter_id: me.id, reported_id: targetId, reason: reason || null });
+  if(error){ toast('Segnalazione non riuscita.'); return; }
+  toast('Segnalazione inviata. Grazie.');
 }
 
 async function decide(liked){
@@ -261,7 +307,7 @@ async function loadLikes(){
   }
   const rows = admirers.map(a=>`
     <div class="row-card" ${isPremium?`onclick='likeBack(${JSON.stringify(a.id)})'`:''} style="${isPremium?'':'cursor:default;'}">
-      <div class="row-avatar">${a.emoji||'✨'}</div>
+      ${avatarHtml(a, 'row-avatar')}
       <div style="flex:1;"><div class="row-name">${isPremium? escapeHtml(a.name)+', '+escapeHtml(a.age) : '???'}</div><div class="row-sub">${isPremium? escapeHtml(a.bio||'') : 'Sblocca Premium per vedere chi è'}</div></div>
     </div>`).join('');
   if(isPremium){
@@ -302,7 +348,7 @@ function renderMatches(){
   if(matches.length===0){ listEl.innerHTML = `<p style="color:var(--muted);font-size:0.9rem;">Nessun incontro ancora — continua a scoprire profili.</p>`; return; }
   listEl.innerHTML = matches.map(m=>`
     <div class="row-card" onclick='openChat(${JSON.stringify(m).replace(/'/g,"&#39;")})'>
-      <div class="row-avatar">${m.emoji||'✨'}</div>
+      ${avatarHtml(m, 'row-avatar')}
       <div style="flex:1;"><div class="row-name">${escapeHtml(m.name)}, ${escapeHtml(m.age)}</div><div class="row-sub">${escapeHtml(m.bio||'Di ciao 👋')}</div></div>
       <span style="color:var(--wine);">💬</span>
     </div>`).join('');
@@ -335,8 +381,9 @@ function renderChatHeader(){
   el.innerHTML = `
     <div class="chat-header">
       <button onclick="switchTab('matches')">←</button>
-      <div class="row-avatar" style="width:36px;height:36px;font-size:1.1rem;">${activeChat.emoji||'✨'}</div>
-      <span style="font-weight:600;">${escapeHtml(activeChat.name)}</span>
+      ${avatarHtml(activeChat, 'row-avatar', 'width:36px;height:36px;font-size:1.1rem;')}
+      <span style="font-weight:600;flex:1;">${escapeHtml(activeChat.name)}</span>
+      <button onclick="reportUser('${activeChat.id}')" title="Segnala" style="background:none;border:none;color:var(--muted);font-size:1rem;">⚑</button>
     </div>
     <div class="chat-body" id="chat-body"></div>
     <div class="chat-input-row">
@@ -426,12 +473,13 @@ function renderProfile(){
   el.innerHTML = `
     <h2 class="section-title">Il tuo profilo</h2>
     <div class="profile-card">
-      <div class="avatar-big">${profile.emoji}</div>
+      ${avatarHtml(profile, 'avatar-big')}
       <div class="name-row"><h3>${escapeHtml(profile.name)}, ${escapeHtml(profile.age)}</h3>${isPremium?'<span class="verified">✔</span>':''}</div>
       <p class="bio-text">${escapeHtml(profile.bio||'')}</p>
       <div class="tags-mini">${(profile.tags||[]).map(t=>`<span class="tag-chip">${escapeHtml(t)}</span>`).join('')}</div>
     </div>
     <button class="btn-outline" onclick="editProfile()">Modifica profilo</button>
+    ${isAdmin ? `<a href="admin.html" style="display:block;text-align:center;margin-top:10px;color:var(--wine);font-weight:600;font-size:0.9rem;text-decoration:none;">🛡 Pannello Admin</a>` : ''}
     <button class="btn-logout" onclick="logout()">Esci</button>
   `;
 }
@@ -442,7 +490,11 @@ function editProfile(){
   document.getElementById('setup-age').value = profile.age;
   document.getElementById('setup-bio').value = profile.bio;
   document.getElementById('bio-count').textContent = (profile.bio||'').length;
-  window._setupEmoji = profile.emoji; window._setupTags = [...(profile.tags||[])];
+  window._setupEmoji = profile.emoji; window._setupTags = [...(profile.tags||[])]; window._setupAvatarUrl = profile.avatar_url || null;
+  const preview = document.getElementById('avatar-preview');
+  if(profile.avatar_url){ preview.style.backgroundImage = `url('${profile.avatar_url}')`; preview.textContent=''; }
+  else { preview.style.backgroundImage='none'; preview.textContent = profile.emoji || '✨'; }
+  document.getElementById('avatar-status').textContent = '';
   document.querySelectorAll('.emoji-pick').forEach(b=>b.classList.toggle('sel', b.textContent===profile.emoji));
   document.querySelectorAll('.tag-pick').forEach(b=>b.classList.toggle('sel', (profile.tags||[]).includes(b.textContent)));
 }
