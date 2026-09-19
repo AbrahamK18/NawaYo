@@ -94,7 +94,16 @@ async function handleAvatarSelect(e){
   const preview = document.getElementById('avatar-preview');
   preview.style.backgroundImage = `url('${url}')`;
   preview.textContent = '';
-  statusEl.textContent = 'Foto caricata ✓';
+    statusEl.textContent = 'Foto caricata ✓';
+}
+
+function removeAvatar(){
+  window._setupAvatarUrl = null;
+  document.getElementById('avatar-file').value = '';
+  const preview = document.getElementById('avatar-preview');
+  preview.style.backgroundImage = 'none';
+  preview.textContent = window._setupEmoji || '✨';
+  document.getElementById('avatar-status').textContent = 'Foto rimossa';
 }
 
 // ---------- AUTH ----------
