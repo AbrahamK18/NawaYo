@@ -38,7 +38,10 @@
       <div id="avatar-preview" onclick="document.getElementById('avatar-file').click()" style="width:64px;height:64px;border-radius:50%;background:var(--blush);display:flex;align-items:center;justify-content:center;font-size:1.6rem;background-size:cover;background-position:center;cursor:pointer;flex-shrink:0;">✨</div>
       <div>
         <input type="file" id="avatar-file" accept="image/*" style="display:none;" onchange="handleAvatarSelect(event)" />
-        <button type="button" class="btn-outline" style="width:auto;padding:8px 16px;margin:0;" onclick="document.getElementById('avatar-file').click()">Carica foto</button>
+                <div style="display:flex;gap:8px;">
+          <button type="button" class="btn-outline" style="width:auto;padding:8px 16px;margin:0;" onclick="document.getElementById('avatar-file').click()">Carica foto</button>
+          <button type="button" onclick="removeAvatar()" style="width:auto;padding:8px 16px;margin:0;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--wine);font-size:0.85rem;">Rimuovi</button>
+        </div>
         <p id="avatar-status" style="font-size:0.72rem;color:var(--muted);margin:4px 0 0;"></p>
       </div>
     </div>
