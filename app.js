@@ -103,7 +103,7 @@ async function handleAvatarSelect(e){
   const preview = document.getElementById('avatar-preview');
   preview.style.backgroundImage = `url('${url}')`;
   preview.textContent = '';
-    statusEl.textContent = 'Foto caricata ✓';
+  statusEl.textContent = 'Foto caricata ✓';
 }
 
 function removeAvatar(){
@@ -221,6 +221,14 @@ function showApp(){
   document.getElementById('screen-app').classList.remove('hidden');
   updateStatusPill();
   switchTab('browse');
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('payment') === 'success'){
+    toast('Pagamento ricevuto! Il Premium si attiverà a breve.');
+    history.replaceState({}, '', window.location.pathname);
+  } else if(params.get('payment') === 'cancelled'){
+    toast('Pagamento annullato.');
+    history.replaceState({}, '', window.location.pathname);
+  }
 }
 function updateStatusPill(){
   const pill = document.getElementById('status-pill');
@@ -472,7 +480,7 @@ async function sendMessage(){
   loadMessages();
 }
 
-// ---------- PREMIUM (demo — nessun pagamento reale) ----------
+// ---------- PREMIUM (pagamento reale via NOWPayments) ----------
 function renderPremium(){
   const el = document.getElementById('tab-premium');
   if(isPremium){
@@ -481,7 +489,6 @@ function renderPremium(){
         <h3>Sei Premium 👑</h3>
         <p style="font-size:0.85rem;">Hai accesso completo: messaggi, chi ti ha messo like, like illimitati e il badge di verifica sul tuo profilo.</p>
       </div>
-      <button class="btn-outline" onclick="togglePremium(false)">Disattiva Premium (demo)</button>
     `;
   } else {
     el.innerHTML = `
@@ -495,18 +502,32 @@ function renderPremium(){
           <li>Badge di profilo verificato</li>
         </ul>
       </div>
-      <button class="btn-primary btn-gold" onclick="togglePremium(true)">Sblocca Premium (demo)</button>
-      <p class="disclaimer" style="text-align:center;">Nessun pagamento reale viene effettuato qui: per accettare dei pagamenti veri servirebbe integrare Stripe.</p>
+      <button class="btn-primary btn-gold" id="pay-btn" onclick="startPayment()">Paga con crypto</button>
+      <p class="disclaimer" style="text-align:center;">Pagamento sicuro tramite NOWPayments (USDT e altre criptovalute). Il Premium si attiva automaticamente dopo la conferma del pagamento.</p>
     `;
   }
 }
-async function togglePremium(val){
-  isPremium = val;
-  await supabaseClient.from('profiles').update({ is_premium: val, verified: val }).eq('id', me.id);
-  profile.is_premium = val; profile.verified = val;
-  updateStatusPill();
-  toast(val ? 'Premium attivato (demo).' : 'Premium disattivato.');
-  renderPremium();
+async function startPayment(){
+  const btn = document.getElementById('pay-btn');
+  if(!btn) return;
+  btn.disabled = true; btn.textContent = 'Caricamento...';
+  try{
+    const { data: { session: currentSession } } = await supabaseClient.auth.getSession();
+    const res = await fetch('/api/create-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + currentSession.access_token }
+    });
+    const data = await res.json();
+    if(!res.ok || !data.invoice_url){
+      toast('Errore nella creazione del pagamento.');
+      btn.disabled = false; btn.textContent = 'Paga con crypto';
+      return;
+    }
+    window.location.href = data.invoice_url;
+  } catch(e){
+    toast('Errore di connessione.');
+    btn.disabled = false; btn.textContent = 'Paga con crypto';
+  }
 }
 
 // ---------- PROFILE ----------
