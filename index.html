@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="styles.css">
 <style>
   body{background:var(--ivory);}
-  .lp-wrap{max-width:480px;margin:0 auto;padding:0 0 60px;}
+  .lp-wrap{max-width:480px;margin:0 auto;padding:0 0 60px;overflow:hidden;}
   .lp-header{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;}
   .lp-logo{display:flex;align-items:center;gap:8px;font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--wine-dark);font-weight:600;}
   .lp-header a.btn-small{background:var(--wine);color:var(--ivory);font-size:0.82rem;font-weight:600;padding:9px 16px;border-radius:999px;text-decoration:none;}
@@ -23,13 +23,21 @@
   .lp-stats{display:flex;justify-content:space-between;padding:0 22px;margin-bottom:36px;}
   .lp-stat-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--wine-dark);font-weight:700;}
   .lp-stat-lbl{font-size:0.72rem;color:var(--muted);margin-top:2px;}
-  .lp-visual{position:relative;height:230px;margin:0 22px 20px;}
-  .lp-card{position:absolute;width:150px;height:190px;border-radius:18px;box-shadow:0 10px 30px rgba(92,26,43,0.18);border:4px solid #fff;overflow:hidden;display:flex;align-items:flex-end;padding:12px;color:#fff;font-size:0.8rem;}
-  .lp-card-1{left:8px;top:10px;transform:rotate(-6deg);background:linear-gradient(160deg,var(--wine),var(--wine-dark));z-index:1;}
-  .lp-card-2{right:0;top:45px;transform:rotate(5deg);background:linear-gradient(160deg,#3A3A46,#22222C);z-index:2;}
-  .lp-card b{display:block;font-family:'Cormorant Garamond',serif;font-size:1.05rem;}
-  .lp-heart-badge{position:absolute;left:50%;top:100px;transform:translateX(-50%);width:52px;height:52px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 6px 16px rgba(201,162,39,0.4);z-index:3;}
-  .lp-tag-pill{position:absolute;bottom:0;left:50%;transform:translateX(-50%);background:var(--wine-dark);color:var(--ivory);font-size:0.72rem;padding:6px 14px;border-radius:999px;white-space:nowrap;}
+
+  /* Visual: abstract layered composition, no fake stock photos */
+  .lp-visual{position:relative;height:260px;margin:0 22px 28px;border-radius:24px;overflow:hidden;background:linear-gradient(155deg,var(--wine-dark) 0%,var(--wine) 55%,#7A2E3F 100%);}
+  .lp-visual::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 15%, rgba(228,201,120,0.25) 0, transparent 40%),radial-gradient(circle at 85% 75%, rgba(228,201,120,0.18) 0, transparent 45%);}
+  .lp-visual-ring{position:absolute;border:1.5px solid rgba(228,201,120,0.35);border-radius:50%;}
+  .lp-ring-1{width:180px;height:180px;top:-40px;right:-40px;}
+  .lp-ring-2{width:110px;height:110px;bottom:-20px;left:20px;}
+  .lp-visual-card{position:absolute;width:128px;padding:14px;border-radius:14px;background:rgba(255,255,255,0.08);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.18);color:#fff;}
+  .lp-visual-card-1{left:24px;top:34px;transform:rotate(-4deg);}
+  .lp-visual-card-2{right:20px;top:100px;transform:rotate(3deg);}
+  .lp-visual-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:8px;}
+  .lp-visual-card b{display:block;font-family:'Cormorant Garamond',serif;font-size:1rem;}
+  .lp-visual-card span{font-size:0.68rem;opacity:0.8;}
+  .lp-heart-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:56px;height:56px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 8px 24px rgba(0,0,0,0.25);color:var(--wine-dark);}
+
   .lp-features{padding:0 22px;}
   .lp-feature{display:flex;gap:12px;margin-bottom:18px;}
   .lp-feature-ic{width:38px;height:38px;border-radius:50%;background:var(--blush);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
@@ -62,10 +70,19 @@
   </div>
 
   <div class="lp-visual">
-    <div class="lp-card lp-card-1"><div><b>Giulia, 27</b>Milano · Verificata</div></div>
-    <div class="lp-card lp-card-2"><div><b>Marco, 31</b>Roma · Verificato</div></div>
-    <div class="lp-heart-badge">♥</div>
-    <div class="lp-tag-pill">trova la tua anima gemella</div>
+    <div class="lp-visual-ring lp-ring-1"></div>
+    <div class="lp-visual-ring lp-ring-2"></div>
+    <div class="lp-visual-card lp-visual-card-1">
+      <div class="lp-visual-avatar">✨</div>
+      <b>Verificato</b>
+      <span>Profili reali e controllati</span>
+    </div>
+    <div class="lp-visual-card lp-visual-card-2">
+      <div class="lp-visual-avatar">💬</div>
+      <b>Conversazioni vere</b>
+      <span>Niente bot, niente spam</span>
+    </div>
+    <div class="lp-heart-center">♥</div>
   </div>
 
   <div class="lp-divider"></div>
