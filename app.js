@@ -54,6 +54,11 @@ function closePhotoViewer(){
 window.addEventListener('DOMContentLoaded', async () => {
   buildSetupPickers();
 
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('mode') === 'signup'){
+    setAuthMode('signup');
+  }
+
   const { data: { session: existing } } = await supabaseClient.auth.getSession();
   if(existing){ session = existing; await afterAuth(); }
 
