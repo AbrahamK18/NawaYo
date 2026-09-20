@@ -51,6 +51,16 @@ function closePhotoViewer(){
 }
 
 // ---------- BOOT ----------
+const SESSION_TIMEOUT_MS = 3 * 60 * 1000;
+
+function recordLastLeft(){
+  try{ localStorage.setItem('anima_last_left', Date.now().toString()); }catch(e){}
+}
+window.addEventListener('pagehide', recordLastLeft);
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'hidden') recordLastLeft();
+});
+
 window.addEventListener('DOMContentLoaded', async () => {
   buildSetupPickers();
 
@@ -59,6 +69,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     setAuthMode('signup');
   }
 
+  try{
+    const lastLeft = localStorage.getItem('anima_last_left');
+    if(lastLeft && (Date.now() - parseInt(lastLeft, 10)) > SESSION_TIMEOUT_MS){
+      await supabaseClient.auth.signOut();
+      localStorage.removeItem('anima_last_left');
+    }
+  }catch(e){}
+
   const { data: { session: existing } } = await supabaseClient.auth.getSession();
   if(existing){ session = existing; await afterAuth(); }
 
@@ -66,6 +84,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     session = newSession;
   });
 });
+
 
 function buildSetupPickers(){
   const er = document.getElementById('emoji-row');
