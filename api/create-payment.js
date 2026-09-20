@@ -35,8 +35,9 @@ module.exports = async (req, res) => {
         order_id: user.id,
         order_description: 'Anima Premium - abbonamento mensile',
         ipn_callback_url: `${origin}/api/nowpayments-webhook`,
-        success_url: `${origin}/index.html?payment=success`,
-        cancel_url: `${origin}/index.html?payment=cancelled`,
+        success_url: `${origin}/app.html?payment=success`,
+        cancel_url: `${origin}/app.html?payment=cancelled`,
+
       }),
     });
 
