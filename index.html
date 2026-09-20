@@ -2,110 +2,92 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Anima — Trova la tua anima gemella</title>
 <link rel="stylesheet" href="styles.css">
+<style>
+  body{background:var(--ivory);}
+  .lp-wrap{max-width:480px;margin:0 auto;padding:0 0 60px;}
+  .lp-header{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;}
+  .lp-logo{display:flex;align-items:center;gap:8px;font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--wine-dark);font-weight:600;}
+  .lp-header a.btn-small{background:var(--wine);color:var(--ivory);font-size:0.82rem;font-weight:600;padding:9px 16px;border-radius:999px;text-decoration:none;}
+  .lp-hero{padding:28px 22px 10px;}
+  .lp-eyebrow{color:var(--wine);font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;}
+  .lp-headline{font-family:'Cormorant Garamond',serif;font-size:2.5rem;line-height:1.15;color:var(--ink);margin:0 0 16px;}
+  .lp-headline em{font-style:italic;color:var(--wine);}
+  .lp-sub{color:var(--muted);font-size:0.95rem;line-height:1.6;margin-bottom:26px;}
+  .lp-cta{display:block;text-align:center;width:100%;padding:15px;border-radius:12px;background:var(--wine);color:var(--ivory);font-weight:700;font-size:0.98rem;text-decoration:none;box-shadow:0 8px 20px rgba(92,26,43,0.18);}
+  .lp-cta-secondary{display:block;text-align:center;margin-top:12px;color:var(--wine);font-weight:600;font-size:0.88rem;text-decoration:none;}
+  .lp-trust{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:0.78rem;margin-top:20px;}
+  .lp-divider{height:1px;background:var(--line);margin:32px 22px;}
+  .lp-stats{display:flex;justify-content:space-between;padding:0 22px;margin-bottom:36px;}
+  .lp-stat-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--wine-dark);font-weight:700;}
+  .lp-stat-lbl{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+  .lp-visual{position:relative;height:230px;margin:0 22px 20px;}
+  .lp-card{position:absolute;width:150px;height:190px;border-radius:18px;box-shadow:0 10px 30px rgba(92,26,43,0.18);border:4px solid #fff;overflow:hidden;display:flex;align-items:flex-end;padding:12px;color:#fff;font-size:0.8rem;}
+  .lp-card-1{left:8px;top:10px;transform:rotate(-6deg);background:linear-gradient(160deg,var(--wine),var(--wine-dark));z-index:1;}
+  .lp-card-2{right:0;top:45px;transform:rotate(5deg);background:linear-gradient(160deg,#3A3A46,#22222C);z-index:2;}
+  .lp-card b{display:block;font-family:'Cormorant Garamond',serif;font-size:1.05rem;}
+  .lp-heart-badge{position:absolute;left:50%;top:100px;transform:translateX(-50%);width:52px;height:52px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 6px 16px rgba(201,162,39,0.4);z-index:3;}
+  .lp-tag-pill{position:absolute;bottom:0;left:50%;transform:translateX(-50%);background:var(--wine-dark);color:var(--ivory);font-size:0.72rem;padding:6px 14px;border-radius:999px;white-space:nowrap;}
+  .lp-features{padding:0 22px;}
+  .lp-feature{display:flex;gap:12px;margin-bottom:18px;}
+  .lp-feature-ic{width:38px;height:38px;border-radius:50%;background:var(--blush);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+  .lp-feature-title{font-weight:600;font-size:0.92rem;color:var(--ink);}
+  .lp-feature-desc{font-size:0.82rem;color:var(--muted);margin-top:2px;line-height:1.4;}
+</style>
 </head>
 <body>
-<div id="app">
+<div class="lp-wrap">
+  <div class="lp-header">
+    <div class="lp-logo">💞 Anima</div>
+    <a class="btn-small" href="app.html">Accedi</a>
+  </div>
 
-  <!-- AUTH -->
-  <div id="screen-auth">
-    <div class="seal"></div>
-    <h1 class="brand display">Anima</h1>
-    <p class="tagline">trova la tua anima gemella</p>
-    <div class="auth-box">
-      <div class="auth-toggle">
-        <button id="toggle-login" class="active" onclick="setAuthMode('login')">Accedi</button>
-        <button id="toggle-signup" onclick="setAuthMode('signup')">Registrati</button>
-      </div>
-      <input id="auth-email" type="email" placeholder="Email" autocomplete="email" />
-      <input id="auth-password" type="password" placeholder="Password (min. 6 caratteri)" autocomplete="current-password" />
-      <p id="forgot-password-link" style="text-align:right;margin:-6px 0 10px;"><a href="forgot-password.html" style="color:var(--gold-soft);font-size:0.78rem;text-decoration:none;">Password dimenticata?</a></p>
-      <div class="error hidden" id="auth-error"></div>
-      <div class="info-msg hidden" id="auth-info"></div>
-      <button class="btn-primary btn-gold" id="auth-submit" onclick="handleAuthSubmit()">Accedi</button>
-      <p class="disclaimer">Creando un account accetti che il tuo profilo sia visibile agli altri utenti di Anima.</p>
+  <div class="lp-hero">
+    <div class="lp-eyebrow">Incontri seri · In Italia</div>
+    <h1 class="lp-headline">Ogni grande storia inizia con un <em>incontro sincero.</em></h1>
+    <p class="lp-sub">Anima avvicina le persone che condividono i tuoi valori, i tuoi progetti e la tua visione dell'amore. Niente giochetti, solo incontri autentici.</p>
+    <a class="lp-cta" href="app.html?mode=signup">Inizia gratis</a>
+    <a class="lp-cta-secondary" href="app.html">Hai già un account? Accedi</a>
+    <div class="lp-trust">🛡️ Profili moderati · Solo 18+</div>
+  </div>
+
+  <div class="lp-divider"></div>
+
+  <div class="lp-stats">
+    <div><div class="lp-stat-num">10</div><div class="lp-stat-lbl">messaggi gratis</div></div>
+    <div><div class="lp-stat-num">100%</div><div class="lp-stat-lbl">incontri seri</div></div>
+    <div><div class="lp-stat-num">24/7</div><div class="lp-stat-lbl">moderazione</div></div>
+  </div>
+
+  <div class="lp-visual">
+    <div class="lp-card lp-card-1"><div><b>Giulia, 27</b>Milano · Verificata</div></div>
+    <div class="lp-card lp-card-2"><div><b>Marco, 31</b>Roma · Verificato</div></div>
+    <div class="lp-heart-badge">♥</div>
+    <div class="lp-tag-pill">trova la tua anima gemella</div>
+  </div>
+
+  <div class="lp-divider"></div>
+
+  <div class="lp-features">
+    <div class="lp-feature">
+      <div class="lp-feature-ic">✨</div>
+      <div><div class="lp-feature-title">Profili autentici</div><div class="lp-feature-desc">Foto vere, bio curate, badge di verifica per chi passa a Premium.</div></div>
+    </div>
+    <div class="lp-feature">
+      <div class="lp-feature-ic">💬</div>
+      <div><div class="lp-feature-title">Chat sicura</div><div class="lp-feature-desc">Messaggistica in tempo reale, senza condivisione di numeri o link.</div></div>
+    </div>
+    <div class="lp-feature">
+      <div class="lp-feature-ic">👑</div>
+      <div><div class="lp-feature-title">Premium quando vuoi</div><div class="lp-feature-desc">Messaggi illimitati, vedi chi ti ha messo like, badge verificato.</div></div>
     </div>
   </div>
 
-  <!-- SETUP -->
-  <div id="screen-setup" class="hidden">
-    <h2 class="section-title">Crea il tuo profilo</h2>
-    <p style="color:var(--muted);font-size:0.88rem;margin-top:-8px;">Qualche dettaglio per farti conoscere.</p>
-    <span class="label">Foto profilo</span>
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">
-      <div id="avatar-preview" onclick="document.getElementById('avatar-file').click()" style="width:64px;height:64px;border-radius:50%;background:var(--blush);display:flex;align-items:center;justify-content:center;font-size:1.6rem;background-size:cover;background-position:center;cursor:pointer;flex-shrink:0;">✨</div>
-      <div>
-        <input type="file" id="avatar-file" accept="image/*" style="display:none;" onchange="handleAvatarSelect(event)" />
-                <div style="display:flex;gap:8px;">
-          <button type="button" class="btn-outline" style="width:auto;padding:8px 16px;margin:0;" onclick="document.getElementById('avatar-file').click()">Carica foto</button>
-          <button type="button" onclick="removeAvatar()" style="width:auto;padding:8px 16px;margin:0;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--wine);font-size:0.85rem;">Rimuovi</button>
-        </div>
-        <p id="avatar-status" style="font-size:0.72rem;color:var(--muted);margin:4px 0 0;"></p>
-      </div>
-    </div>
-    <span class="label">Oppure scegli un'icona</span>
-    <div class="emoji-row" id="emoji-row"></div>
-    <span class="label">Nome</span>
-    <input id="setup-name" placeholder="Il tuo nome" />
-    <span class="label">Età</span>
-    <input id="setup-age" placeholder="La tua età" inputmode="numeric" />
-    <span class="label">Bio</span>
-    <textarea id="setup-bio" rows="3" maxlength="160" placeholder="Racconta qualcosa di te"></textarea>
-    <div class="charcount"><span id="bio-count">0</span>/160</div>
-    <span class="label">Interessi (fino a 5)</span>
-    <div class="tag-row" id="tag-row"></div>
-    <button class="btn-primary" style="margin-top:26px;" onclick="finishSetup()">Inizia a incontrare</button>
-  </div>
-
-  <!-- APP -->
-  <div id="screen-app" class="hidden">
-    <header>
-      <div class="brand-mini">💞<span class="display">Anima</span></div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span id="status-pill" class="free-pill">Gratuito</span>
-      </div>
-    </header>
-
-    <main>
-      <div id="tab-browse" class="tab-content"></div>
-      <div id="tab-likes" class="tab-content hidden"></div>
-      <div id="tab-matches" class="tab-content hidden"></div>
-      <div id="tab-chat" class="hidden"></div>
-      <div id="tab-premium" class="tab-content hidden"></div>
-      <div id="tab-profile" class="tab-content hidden"></div>
-    </main>
-
-    <nav>
-      <button data-tab="browse" onclick="switchTab('browse')"><span class="ic">🔥</span>Scopri</button>
-      <button data-tab="likes" onclick="switchTab('likes')"><span class="ic">💛</span>Ti piaci a</button>
-      <button data-tab="matches" onclick="switchTab('matches')"><span class="ic">💬</span>Incontri</button>
-      <button data-tab="premium" onclick="switchTab('premium')"><span class="ic">👑</span>Premium</button>
-      <button data-tab="profile" onclick="switchTab('profile')"><span class="ic">👤</span>Profilo</button>
-    </nav>
-  </div>
-
-  <div id="match-popup" class="hidden">
-    <div class="seal"></div>
-    <h2>È un incontro speciale!</h2>
-    <p id="match-popup-text"></p>
-    <div class="popup-actions">
-      <button onclick="closeMatchPopup()">Continua a esplorare</button>
-      <button class="solid" onclick="goToMatchChat()">Scrivi ora</button>
-    </div>
-  </div>
-
-    <div id="toast"></div>
-
-  <div id="photo-viewer" class="hidden" onclick="closePhotoViewer()">
-    <button id="photo-viewer-close" onclick="closePhotoViewer()">✕</button>
-    <img id="photo-viewer-img" src="" alt="Foto profilo" />
+  <div style="padding:28px 22px 0;">
+    <a class="lp-cta" href="app.html?mode=signup">Crea il tuo profilo</a>
   </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
-<script src="app.js"></script>
 </body>
 </html>
