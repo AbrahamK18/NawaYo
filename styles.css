@@ -6,7 +6,7 @@
 *{box-sizing:border-box;}
 body{margin:0;font-family:'Inter',sans-serif;background:var(--ivory);color:var(--ink);}
 .display{font-family:'Cormorant Garamond',serif;}
-html, body{height:100%;margin:0;}
+html, body{height:100%;margin:0;overscroll-behavior-y:none;}
 #app{max-width:480px;margin:0 auto;height:100vh;height:100dvh;background:var(--ivory);position:relative;display:flex;flex-direction:column;overflow:hidden;}
 .hidden{display:none !important;}
 /* AUTH */
