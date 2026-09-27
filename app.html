@@ -70,7 +70,8 @@
     <header>
       <div class="brand-mini">💞<span class="display">Anima</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <span id="status-pill" class="free-pill">Gratuito</span>
+        <button id="install-app-btn" class="hidden" onclick="installApp()" style="background:var(--gold);color:var(--wine-dark);border:none;border-radius:999px;font-size:0.72rem;font-weight:700;padding:6px 12px;cursor:pointer;">📲 Installa</button>
+        <span id="status-pill" class="free-pill">Free</span>
       </div>
     </header>
 
@@ -86,7 +87,7 @@
     <nav>
       <button data-tab="browse" onclick="switchTab('browse')"><span class="ic">🔥</span>Scopri</button>
       <button data-tab="likes" onclick="switchTab('likes')"><span class="ic">💛</span>Ti piaci a</button>
-      <button data-tab="matches" onclick="switchTab('matches')"><span class="ic">💬</span>Incontri</button>
+      <button data-tab="matches" onclic="switchTab('matches')"><span class="ic">💬</span>Incontri</button>
       <button data-tab="premium" onclick="switchTab('premium')"><span class="ic">👑</span>Premium</button>
       <button data-tab="profile" onclick="switchTab('profile')"><span class="ic">👤</span>Profilo</button>
     </nav>
