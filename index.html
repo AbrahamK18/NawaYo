@@ -54,9 +54,11 @@
 <div class="lp-wrap">
   <div class="lp-header">
     <div class="lp-logo">💞 Anima</div>
-    <a class="btn-small" href="app.html">Accedi</a>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button id="install-app-btn" class="hidden" onclick="installLandingApp()" style="background:var(--gold);color:var(--wine-dark);border:none;border-radius:999px;font-size:0.72rem;font-weight:700;padding:9px 12px;cursor:pointer;">📲 Installa</button>
+      <a class="btn-small" href="app.html">Accedi</a>
+    </div>
   </div>
-
   <div class="lp-hero">
     <div class="lp-eyebrow">Incontri seri · In tutto il mondo</div>
     <h1 class="lp-headline">Ogni grande storia inizia con un <em>incontro sincero.</em></h1>
@@ -111,5 +113,23 @@
     <a class="lp-cta" href="app.html?mode=signup">Crea il tuo profilo</a>
   </div>
 </div>
+<script>
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = document.getElementById('install-app-btn');
+  if(btn) btn.classList.remove('hidden');
+});
+function installLandingApp(){
+  if(!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(() => {
+    deferredInstallPrompt = null;
+    const btn = document.getElementById('install-app-btn');
+    if(btn) btn.classList.add('hidden');
+  });
+}
+</script>
 </body>
 </html>
