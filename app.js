@@ -50,7 +50,26 @@ function closePhotoViewer(){
   document.getElementById('photo-viewer-img').src = '';
 }
 
+// ---------- INSTALL APP PROMPT ----------
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = document.getElementById('install-app-btn');
+  if(btn) btn.classList.remove('hidden');
+});
+function installApp(){
+  if(!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(() => {
+    deferredInstallPrompt = null;
+    const btn = document.getElementById('install-app-btn');
+    if(btn) btn.classList.add('hidden');
+  });
+}
+
 // ---------- BOOT ----------
+// ---------- SESSION TIMEOUT ----------
 const SESSION_TIMEOUT_MS = 3 * 60 * 1000;
 
 function recordLastLeft(){
